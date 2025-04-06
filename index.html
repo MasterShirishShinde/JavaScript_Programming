@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess Game</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      font-family: 'Segoe UI', sans-serif;
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 30px;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px black;
+    }
+
+    .chessboard {
+      display: grid;
+      grid-template-columns: repeat(8, 80px);
+      grid-template-rows: repeat(8, 80px);
+      border: 6px solid white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0,0,0,0.7);
+    }
+
+    .square {
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      transition: 0.2s;
+      user-select: none;
+    }
+
+    .white {
+      background-color: #eee;
+    }
+
+    .black {
+      background-color: #769656;
+    }
+
+    .square:hover {
+      filter: brightness(1.1);
+    }
+
+    .selected {
+      outline: 3px solid #ffc107;
+      box-shadow: inset 0 0 10px #000;
+    }
+
+    .piece-black {
+      color: #1b1b1b;
+    }
+
+    .piece-white {
+      color: #fff;
+      text-shadow: 0 0 4px rgba(0,0,0,0.4);
+    }
+
+    footer {
+      margin-top: 30px;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h1>♟️Chess</h1>
+  <div class="chessboard" id="chessboard"></div>
+  <footer>&copy; Chess by Shirish Satish Shinde 🐺</footer>
+
+  <script>
+    const boardElement = document.getElementById("chessboard");
+
+    const pieces = {
+      r: "♜", n: "♞", b: "♝", q: "♛", k: "♚", p: "♟",
+      R: "♖", N: "♘", B: "♗", Q: "♕", K: "♔", P: "♙",
+      "": ""
+    };
+
+    let board = [
+      ["r","n","b","q","k","b","n","r"],
+      ["p","p","p","p","p","p","p","p"],
+      ["","","","","","","",""],
+      ["","","","","","","",""],
+      ["","","","","","","",""],
+      ["","","","","","","",""],
+      ["P","P","P","P","P","P","P","P"],
+      ["R","N","B","Q","K","B","N","R"]
+    ];
+
+    let selected = null;
+
+    function drawBoard() {
+      boardElement.innerHTML = "";
+      for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+          const square = document.createElement("div");
+          square.className = `square ${(row + col) % 2 === 0 ? "white" : "black"}`;
+
+          const piece = board[row][col];
+          if (piece) {
+            const span = document.createElement("span");
+            span.textContent = pieces[piece];
+            span.className = piece === piece.toUpperCase() ? "piece-white" : "piece-black";
+            square.appendChild(span);
+          }
+
+          square.dataset.row = row;
+          square.dataset.col = col;
+          if (selected && selected.row == row && selected.col == col) {
+            square.classList.add("selected");
+          }
+          square.onclick = () => handleClick(row, col);
+          boardElement.appendChild(square);
+        }
+      }
+    }
+
+    function handleClick(row, col) {
+      if (!selected && board[row][col] !== "") {
+        selected = { row, col };
+      } else if (selected) {
+        const { row: r, col: c } = selected;
+        board[row][col] = board[r][c];
+        board[r][c] = "";
+        selected = null;
+      }
+      drawBoard();
+    }
+
+    drawBoard();
+  </script>
+</body>
+</html>
